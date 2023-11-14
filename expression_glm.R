@@ -9,8 +9,8 @@ training_data = data %>% filter(row_number() %% 5 != 0)
 
 colnames(training_data)
 
-use_pca = TRUE
-use_cv = TRUE
+use_pca = FALSE
+use_cv = FALSE
 
 if (use_pca) {
   numeric_data = training_data[, sapply(training_data, is.numeric)]
