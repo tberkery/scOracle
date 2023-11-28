@@ -19,7 +19,7 @@ data_encoded = model.matrix(~ cell_type + sm_name + sm_lincs_id - 1, data) # one
 data_encoded_oos = data_encoded %>%
   sample_frac(0.2)
 
-num_runs = 10
+num_runs = 2
 
 data_to_decode = NULL
 
@@ -133,7 +133,7 @@ for (i in 1:num_runs) {
     vip(geom = "point", num_features = 15)
   
   # work with preds
-  product = preds$.pred
+  product = preds
   
   add_df = NULL
   for (selected_gene in c(first_gene, second_gene, third_gene)) {
@@ -233,3 +233,21 @@ b = extract_workflow(xgb_last) %>%
 
 new_df = data_encoded_oos
 
+calculate_mrsme <- function(obs, pred) {
+  # Check if lengths match
+  if (length(obs) != length(pred)) {
+    stop("Lengths of observed and predicted vectors do not match.")
+  }
+  
+  # Convert vectors to matrices with one column each
+  obs_matrix <- matrix(obs, ncol = 1)
+  pred_matrix <- matrix(pred, ncol = 1)
+  
+  # Calculate squared relative mean error for each element
+  squared_relative_error <- (obs_matrix - pred_matrix)^2 / obs_matrix^2
+  
+  # Calculate mean squared relative error
+  mrsme <- mean(squared_relative_error, na.rm = TRUE)
+  
+  return(mrsme)
+}
